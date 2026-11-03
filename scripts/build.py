@@ -102,7 +102,11 @@ def check(doc):
     b = Balance()
     b.feed(doc)
     errors = b.errors[:10] + [f"unclosed <{t}> from line {ln}" for t, ln in b.stack[:10]]
-    for pat, msg in [(r"position\s*:\s*(fixed|sticky)", "position:fixed/sticky (sanitized viewers often clip it)"),
+    # The contents rail may be sticky: where a viewer does not honour it, the rail is a plain column that scrolls away.
+    unrailed = re.sub(r"nav\.toc\s*\{[^}]*\}", "", doc)
+    if re.search(r"position\s*:\s*(fixed|sticky)", unrailed, re.I):
+        warnings.append("found position:fixed/sticky outside nav.toc (sanitized viewers often clip it)")
+    for pat, msg in [
                      (r"@import|<link\b[^>]*stylesheet", "external stylesheet (blocked offline / by viewers)"),
                      (r"url\(\s*['\"]?https?:", "remote url() in CSS"), (r"<iframe\b", "<iframe>"),
                      (r":target\b", ":target selector (unreliable without real anchors)"),

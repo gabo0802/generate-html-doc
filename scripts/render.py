@@ -53,6 +53,8 @@ def main():
     ap.add_argument("--width", type=int, default=860)
     ap.add_argument("--out-dir", default=os.path.join(tempfile.gettempdir(), "html_doc_qa"))
     ap.add_argument("--closed", action="store_true", help="keep <details> as authored")
+    ap.add_argument("--theme", choices=("light", "dark"), default="light",
+                    help="prefers-color-scheme to render with (the default does not follow this machine's setting)")
     a = ap.parse_args()
 
     os.makedirs(a.out_dir, exist_ok=True)
@@ -70,13 +72,16 @@ def main():
     for idx in range(100):  # page through a tall doc with a negative top margin; tall windows fail
         tmp = os.path.join(a.out_dir, f"_page{idx}.html")
         png = os.path.join(a.out_dir, f"_page{idx}.png")
-        shift = f"body{{margin-top:-{idx * H}px !important}}</style>"
+        # The page is shot in tall windows; a sticky contents rail would repeat at the top of each, so it is pinned in place here.
+        shift = f"body{{margin-top:-{idx * H}px !important}}nav.toc{{position:static !important;max-height:none !important}}</style>"
         with open(tmp, "w", encoding="utf-8") as f:
             f.write(page.replace("</style>", shift, 1) if "</style>" in page else f"<style>{shift}" + page)
         if os.path.exists(png):
             os.remove(png)
         args = [exe, "--headless=new", "--disable-gpu", "--hide-scrollbars", "--force-device-scale-factor=1",
                 f"--user-data-dir={profile}", f"--window-size={W},{H}", f"--screenshot={png}"]
+        # Blink's preferred color scheme: 0 is dark, 1 is light.
+        args.append(f"--blink-settings=preferredColorScheme={0 if a.theme == 'dark' else 1}")
         if hasattr(os, "geteuid") and os.geteuid() == 0:
             args.append("--no-sandbox")  # Chrome refuses to start as root (e.g. Linux containers) without it
         subprocess.run(args + [pathlib.Path(tmp).resolve().as_uri()], capture_output=True, timeout=180)

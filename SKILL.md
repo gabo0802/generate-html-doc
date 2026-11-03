@@ -9,7 +9,7 @@ Produces one portable `.html` file that renders the same in a browser, VS Code, 
 
 | Path                       | Purpose                                                                                             |
 | -------------------------- | --------------------------------------------------------------------------------------------------- |
-| `assets/template.src.html` | Starter page: dark theme CSS plus one example of every component                                    |
+| `assets/template.src.html` | Starter page: themed CSS (light and dark from one token set), a left contents rail, and one example of every component                                    |
 | `scripts/build.py`         | `SRC → OUT`: fills code excerpts, bakes highlighting, converts SVG to `<img>`, strips JS, validates |
 | `scripts/snippets.py`      | Excerpt resolver used by `build.py` (JSON spec format is in its docstring)                          |
 | `scripts/hl.py`            | Static highlighter: ts/js/cs/go/…, py, json, sql, shell, yaml                                       |
@@ -30,7 +30,7 @@ What a sanitizing viewer does, and why each rule exists:
    - Page CSS does **not** reach inside an image. Style the SVG with attributes, or with a `<style>` _inside_ the `<svg>`.
    - Give `text` elements explicit `text-anchor`. The default font is Segoe UI; set `font-family` on the `<svg>` to change it.
 3. **Interactivity is `<details>`/`<summary>` only.** CSS `:hover` is fine. Avoid `:target`, checkbox hacks, `popover` and custom URL schemes.
-4. **No fixed or sticky positioning, and nothing external.** That means no remote fonts, images, `@import` or `<link rel=stylesheet>`. Use a static `nav.toc` block at the top, not a sidebar.
+4. **Nothing external, and no fixed positioning.** That means no remote fonts, images, `@import` or `<link rel=stylesheet>`; use local font stacks. The one positioned element is the contents rail: `nav.toc` in the template's `.shell` grid is `position:sticky`. A viewer that does not honour it shows the rail as a plain left column that scrolls away, which still reads well; `build.py` warns about sticky or fixed anywhere else.
 5. **All CSS goes in one `<style>` block in `<head>`.** Classes and inline `style=` both survive.
 
 ## Workflow
@@ -74,7 +74,7 @@ What a sanitizing viewer does, and why each rule exists:
    - `anchor`: the first regex match ± N lines (`nth` picks a later match).
    - `enclosing`: the top-level declaration that contains the match (`indent` raises the allowed declaration indent).
    - `head`: the first N lines of a file.
-   - `tree`: a directory listing (skips dot-dirs, `node_modules`, build output).
+   - `tree`: a directory listing (skips dot-dirs, `node_modules`, build output). `skip` takes names or glob patterns, e.g. `["*.meta"]` for a Unity project.
    - `lines`: a fixed range. Avoid it; it drifts.
    - Each item renders as a collapsed `<details class="src">`: the title and `path:start-end` stay visible, and the code expands with highlighting and line numbers.
    - Add `<span id="snip-date"></span>` somewhere to show when excerpts were generated.
@@ -93,9 +93,19 @@ What a sanitizing viewer does, and why each rule exists:
      - unhighlighted code
      - mojibake (`Â·`, `â†’`)
      - empty sections
-   - Re-run at `--width 1400` if the user has a wide screen.
+   - Re-run at `--width 1400` (with `--closed`, as a reader first sees it) if the user has a wide screen, and once with `--theme dark` (the default is light) to check the dark theme and the diagrams' dark styles.
    - The render can be delegated to a subagent. Fixes stay with whoever authored the doc.
 7. Report what was verified: "checked via DOMPurify simulation + headless render". That is not the real viewer, so say so.
+
+## Design
+
+The template is a starting point, not a look to keep. A doc should read as made for its subject, not as a generated page.
+
+- **Recolor per subject.** Replace the template's tokens with 4-6 colors from the subject's own world (its brand, its materials, its UI), a neutral with a slight hue toward the accent, and a second accent for warnings. Keep every color a token on `:root`, redefined for dark under `@media (prefers-color-scheme:dark)` guarded by `:root:not([data-theme="light"])` and again under `:root[data-theme="dark"]`. Status tags and syntax colors have their own tokens; keep them readable in both themes.
+- **Layout.** A left contents rail (`nav.toc`, numbered sections, the excerpt date) beside one reading column. Open with a header: a mono eyebrow (repo, branch, commit, date), the title, a one- or two-sentence lede, the legend and, when figures matter, stat tiles (`.stats`). It stacks to one column under 900px.
+- **Type.** A display stack for headings (heavy weight, slight negative tracking), a body stack, a mono stack; one scale, kept to. Uppercase labels get letter-spacing. Running text stays near 75 characters wide.
+- **Restraint.** Borders, fills and radius mark separate objects (cards, tiles, diagrams), not every block. Callouts are a colored left rule, not a filled box. Tables use row rules only. No gradients, no emoji as section markers, no glow or shadows.
+- **Diagrams follow the theme.** Page CSS cannot reach a data-URI image, so give each `<svg>` its own `<style>` with light colors and an `@media (prefers-color-scheme:dark)` block with dark ones (the template's example shows the pattern; arrowheads take a class, not a `fill=` attribute). Use the page's token values so diagrams match the page. A host's explicit theme toggle cannot reach inside the image; the diagram follows the system setting.
 
 ## Layout lessons (each one was a real bug)
 
@@ -115,7 +125,7 @@ What a sanitizing viewer does, and why each rule exists:
   - `gap` known defect
   - `decide` needs the user's call
   - `ext` needs an extension
-- Number the sections (`0 · Overview`, `1 · …`) and link each one from `nav.toc`.
+- Number the sections (`0 · Overview`, `1 · …`) and link each one from the `nav.toc` rail; sub-sections use `class="sub"`.
 - Write concisely: tables and diagrams over prose, one idea per callout. Mark every proposal and open decision explicitly.
 - Every claim about code gets an excerpt marker, so readers can verify it in place.
 - After code changes, re-running `build.py` refreshes all line numbers and excerpts.

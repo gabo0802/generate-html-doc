@@ -19,6 +19,7 @@ Spec (JSON sidecar, see SKILL.md):
 }
 """
 import datetime
+import fnmatch
 import html
 import json
 import os
@@ -32,12 +33,12 @@ SKIP_DIRS = {"node_modules", "dist", "build", "out", "venv", ".venv", "__pycache
 
 CSS = """.srcs{display:flex;flex-direction:column;gap:2px;margin:6px 0 10px}
 details.src{background:none;border:0;margin:0;padding:0}details.src[open]{padding:0}
-details.src>summary{cursor:pointer;font:11.5px/1.5 Consolas,"Cascadia Code",ui-monospace,Menlo,"DejaVu Sans Mono",monospace;color:var(--muted,#8b95a5);padding:1px 0}
-details.src>summary:hover,details.src[open]>summary{color:#fff}
-details.src>summary b{color:var(--acc,#6cb6ff);font-weight:600;margin-right:4px}
+details.src>summary{cursor:pointer;font:11.5px/1.5 var(--font-mono,Consolas,"Cascadia Code",ui-monospace,Menlo,"DejaVu Sans Mono",monospace);color:var(--muted,#8b95a5);padding:1px 0}
+details.src>summary:hover,details.src[open]>summary{color:var(--fg,#fff)}
+details.src>summary b{color:var(--accent,var(--acc,#6cb6ff));font-weight:600;margin-right:4px}
 details.src pre{max-height:460px;margin:4px 0 8px;font-size:12px}
 details.src code{white-space:pre;overflow-wrap:normal}
-.ln{display:inline-block;min-width:3.4em;padding-right:1em;text-align:right;color:#4b5563;user-select:none}
+.ln{display:inline-block;min-width:3.4em;padding-right:1em;text-align:right;color:var(--ln,#4b5563);user-select:none}
 td .srcs{margin:0;contain:inline-size}"""
 
 DECL = r"^\s*(?:export\s+)?(?:default\s+)?(?:declare\s+)?(?:abstract\s+)?(?:async\s+)?(?:function|const|let|var|class|def|interface|type|enum|func|fn)\b"
@@ -97,7 +98,9 @@ def _bracket_deltas(lines, start, is_py):
                 if ch in "\"'`":
                     state = ch
                 elif ch in "{[(":
-                    depth, opened = depth + 1, True
+                    # Only a brace or bracket opens a block: a signature's parentheses close on their own line, and a C#-style
+                    # body starts with a brace on the next line.
+                    depth, opened = depth + 1, opened or ch != "("
                 elif ch in "}])":
                     depth -= 1
             elif state in ("/*", '"""', "'''"):
@@ -200,12 +203,17 @@ def tree_lines(base, depth, skip=frozenset()):
     out = []
     for dp, dns, fns in os.walk(base):
         lvl = 0 if dp == base else os.path.relpath(dp, base).count(os.sep) + 1
-        dns[:] = sorted(d for d in dns if d not in SKIP_DIRS and d not in skip and not d.startswith(".") and lvl < depth)
+        dns[:] = sorted(d for d in dns if d not in SKIP_DIRS and not _skipped(d, skip) and not d.startswith(".") and lvl < depth)
         ind = "  " * lvl
         if dp != base:
             out.append(f"{ind[:-2]}{os.path.basename(dp)}/")
-        out += [f"{ind}{f}" for f in sorted(fns) if not f.startswith(".")]
+        out += [f"{ind}{f}" for f in sorted(fns) if not f.startswith(".") and not _skipped(f, skip)]
     return out
+
+
+def _skipped(name, skip):
+    """Whether a name is in the item's "skip" list, which takes names or glob patterns ("*.meta")."""
+    return any(name == pattern or fnmatch.fnmatch(name, pattern) for pattern in skip)
 
 
 def render(entry, ctx):
