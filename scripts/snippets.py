@@ -32,7 +32,7 @@ SKIP_DIRS = {"node_modules", "dist", "build", "out", "venv", ".venv", "__pycache
 
 CSS = """.srcs{display:flex;flex-direction:column;gap:2px;margin:6px 0 10px}
 details.src{background:none;border:0;margin:0;padding:0}details.src[open]{padding:0}
-details.src>summary{cursor:pointer;font:11.5px/1.5 Consolas,"Cascadia Code",monospace;color:var(--muted,#8b95a5);padding:1px 0}
+details.src>summary{cursor:pointer;font:11.5px/1.5 Consolas,"Cascadia Code",ui-monospace,Menlo,"DejaVu Sans Mono",monospace;color:var(--muted,#8b95a5);padding:1px 0}
 details.src>summary:hover,details.src[open]>summary{color:#fff}
 details.src>summary b{color:var(--acc,#6cb6ff);font-weight:600;margin-right:4px}
 details.src pre{max-height:460px;margin:4px 0 8px;font-size:12px}

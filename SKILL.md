@@ -14,9 +14,11 @@ Produces one portable `.html` file that renders the same in a browser, VS Code, 
 | `scripts/snippets.py` | Excerpt resolver used by `build.py` (JSON spec format is in its docstring) |
 | `scripts/hl.py` | Static highlighter: ts/js/cs/go/…, py, json, sql, shell, yaml |
 | `scripts/sanitize.js` | DOMPurify simulation of the viewer; reports anything it strips |
-| `scripts/render.py` | Headless Edge/Chrome screenshots, split into PNG chunks for visual QA |
+| `scripts/render.py` | Headless Edge/Chrome/Chromium screenshots, split into PNG chunks for visual QA |
 
-`SKILL_DIR` means this folder: `~/.agents/skills/generate-html-doc` (Copilot) or `~/.claude/skills/generate-html-doc` (Claude).
+`SKILL_DIR` means the folder containing this file, e.g. `~/.agents/skills/generate-html-doc`, `~/.claude/skills/generate-html-doc`, or a project-local `.agents/skills/generate-html-doc`.
+
+**Requirements:** Python 3, Node.js, Pillow (`python3 -m pip install pillow`, only for `render.py`), and Edge, Chrome or Chromium. Commands below use `python3`; on Windows use `python` or `py`. If the browser is not found, set `HTML_DOC_BROWSER` to its executable.
 
 ## Hard rules (sanitized viewers)
 
@@ -62,12 +64,13 @@ What a sanitizing viewer does, and why each rule exists:
    - `lines`: a fixed range. Avoid it; it drifts.
    - Each item renders as a collapsed `<details class="src">`: the title and `path:start-end` stay visible, and the code expands with highlighting and line numbers.
    - Add `<span id="snip-date"></span>` somewhere to show when excerpts were generated.
-5. **Build:** `python SKILL_DIR/scripts/build.py <dir>/<name>.src.html`. A `.src.html` source writes `<name>.html`; any other file is rebuilt in place. Fix every `ERROR`, and read every `WARN`.
+5. **Build:** `python3 SKILL_DIR/scripts/build.py <dir>/<name>.src.html`. A `.src.html` source writes `<name>.html`; any other file is rebuilt in place. Fix every `ERROR`, and read every `WARN`.
 6. **QA:** both steps are mandatory before claiming the doc is done.
    ```
-   node SKILL_DIR/scripts/sanitize.js <dir>/<name>.html          # -> %TEMP%/<name>.purified.html
-   python SKILL_DIR/scripts/render.py %TEMP%/<name>.purified.html --width 860
+   node SKILL_DIR/scripts/sanitize.js <dir>/<name>.html          # prints "wrote <tmp>/<name>.purified.html"
+   python3 SKILL_DIR/scripts/render.py <tmp>/<name>.purified.html --width 860
    ```
+   - Pass `render.py` the exact path `sanitize.js` printed (the OS temp dir differs per platform).
    - View **every** chunk PNG it prints. All `<details>` are forced open, so excerpt overflow shows up.
    - Check:
      - text clipped or overlapping in diagrams
@@ -86,7 +89,7 @@ What a sanitizing viewer does, and why each rule exists:
   - If a cell is narrow (under ~40%), move the excerpt into a full-width row below it: `<tr><td colspan="N">…markers…</td></tr>`.
 - **`p code, li code {white-space:nowrap}`** must not hit excerpts. The template's `details.src code{white-space:pre}` overrides it; keep that rule.
 - **Flow steps / cards with long identifiers:** use `overflow-wrap:anywhere`, never `nowrap`.
-- **Encoding:** write files with UTF-8 tools, never with a PowerShell 5 `Set-Content`/`Get-Content` round-trip; that produces mojibake. Keep `<meta charset="utf-8">`.
+- **Encoding:** write files with UTF-8 tools. On Windows, never round-trip through PowerShell 5 `Set-Content`/`Get-Content`; that produces mojibake. Keep `<meta charset="utf-8">`.
 - **Editing a built doc that has no `.src.html`:** `build.py` is idempotent on its own output. To edit a diagram, base64-decode the `<img>` `src` back into an SVG, edit it, and inline it again.
 
 ## Content conventions

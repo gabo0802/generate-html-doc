@@ -1,12 +1,14 @@
 """Screenshot an HTML doc into viewable PNG chunks for visual QA (all <details> forced open).
 
 usage: python render.py DOC.html [--width 860] [--out-dir DIR] [--closed]
-Needs Edge or Chrome and Pillow (pip install pillow). Prints the chunk paths; view every one.
+Needs Edge, Chrome or Chromium (or set HTML_DOC_BROWSER to its executable) and Pillow.
+Prints the chunk paths; view every one.
 Tip: render the sanitized output of sanitize.js, not the source, to see what the viewer sees.
 """
 import argparse
 import glob
 import os
+import pathlib
 import re
 import shutil
 import subprocess
@@ -17,23 +19,32 @@ import time
 try:
     from PIL import Image
 except ImportError:
-    sys.exit("Pillow missing: pip install pillow")
+    sys.exit(f'Pillow missing: "{sys.executable}" -m pip install pillow')
 
+_LOCAL = os.environ.get("LOCALAPPDATA", "")
 CANDIDATES = [r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
               r"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
               r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+              r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+              os.path.join(_LOCAL, "Google", "Chrome", "Application", "chrome.exe") if _LOCAL else "",
               "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-              "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge"]
+              "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+              "/Applications/Chromium.app/Contents/MacOS/Chromium",
+              os.path.expanduser("~/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")]
 
 
 def browser():
+    override = os.environ.get("HTML_DOC_BROWSER")
+    if override:
+        return override
     for p in CANDIDATES:
-        if os.path.exists(p):
+        if p and os.path.exists(p):
             return p
-    for name in ("msedge", "google-chrome", "chromium", "chromium-browser", "chrome"):
+    for name in ("msedge", "microsoft-edge", "microsoft-edge-stable", "google-chrome", "google-chrome-stable",
+                 "chromium", "chromium-browser", "chrome"):
         if shutil.which(name):
             return shutil.which(name)
-    sys.exit("no Edge/Chrome found")
+    sys.exit("no Edge/Chrome/Chromium found; set HTML_DOC_BROWSER to the browser executable")
 
 
 def main():
@@ -64,9 +75,11 @@ def main():
             f.write(page.replace("</style>", shift, 1) if "</style>" in page else f"<style>{shift}" + page)
         if os.path.exists(png):
             os.remove(png)
-        subprocess.run([exe, "--headless=new", "--disable-gpu", "--hide-scrollbars", f"--user-data-dir={profile}",
-                        f"--window-size={W},{H}", f"--screenshot={png}", "file:///" + tmp.replace("\\", "/")],
-                       capture_output=True, timeout=180)
+        args = [exe, "--headless=new", "--disable-gpu", "--hide-scrollbars", "--force-device-scale-factor=1",
+                f"--user-data-dir={profile}", f"--window-size={W},{H}", f"--screenshot={png}"]
+        if hasattr(os, "geteuid") and os.geteuid() == 0:
+            args.append("--no-sandbox")  # Chrome refuses to start as root (e.g. Linux containers) without it
+        subprocess.run(args + [pathlib.Path(tmp).resolve().as_uri()], capture_output=True, timeout=180)
         for _ in range(60):
             if os.path.exists(png) and os.path.getsize(png) > 0:
                 time.sleep(1)
