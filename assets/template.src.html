@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TITLE</title>
+<style>
+:root{--bg:#0f1115;--panel:#161a21;--panel2:#1c212a;--line:#2a313c;--text:#d8dee9;--muted:#8b95a5;--acc:#6cb6ff;--ok:#5fd38d;--warn:#f2c14e;--bad:#ff7b72;--prop:#c49bff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.55 "Segoe UI",system-ui,sans-serif}
+nav.toc{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:20px 44px 0;max-width:1192px}
+nav.toc h1{font-size:14px;margin:0 0 6px;color:#fff}
+nav.toc a{display:inline-block;color:var(--muted);text-decoration:none;padding:2px 8px;border-radius:4px;font-size:13px}
+nav.toc a:hover{background:var(--panel2);color:#fff}nav.toc .sub{font-size:12px;opacity:.8}
+main{padding:28px 44px 120px;max-width:1280px}
+h2{margin:48px 0 10px;padding-top:12px;border-top:1px solid var(--line);color:#fff;font-size:22px}
+h3{margin:26px 0 8px;color:#fff;font-size:16px}h4{margin:16px 0 6px;font-size:14px;color:var(--acc)}
+p{margin:6px 0 10px}.muted{color:var(--muted)}a{color:var(--acc)}
+code{font:12.5px/1.45 Consolas,"Cascadia Code",monospace;background:#0b0d11;border:1px solid var(--line);border-radius:4px;padding:0 4px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+p code,li code{white-space:nowrap}td code,.card code{overflow-wrap:anywhere}
+pre{position:relative;background:#0b0d11;border:1px solid var(--line);border-radius:6px;padding:26px 14px 12px;overflow:auto;margin:8px 0 14px}
+pre code{border:0;padding:0;background:none;font-size:12.5px;line-height:1.55;white-space:pre}
+pre[data-lang]::before{content:attr(data-lang);position:absolute;top:6px;right:10px;font:600 10.5px "Segoe UI";letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.tk-key{color:#79c0ff}.tk-str{color:#a5e075}.tk-num{color:#ffa657}.tk-lit{color:#ff7b72}.tk-com{color:#8b949e;font-style:italic}
+.tk-kw{color:#ff7b72}.tk-fn{color:#d2a8ff}.tk-flag{color:#7ee787}.tk-pun{color:#8b95a5}.tk-cmd{color:#d2a8ff;font-weight:600}
+table{border-collapse:collapse;width:100%;margin:8px 0 16px;font-size:13px}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+th{background:var(--panel2);color:#fff;font-weight:600}tr:nth-child(even) td{background:#12151b}
+table.fixed{table-layout:fixed}table.fixed td{overflow-wrap:anywhere}
+.tag{display:inline-block;font-size:11px;font-weight:600;padding:1px 7px;border-radius:10px;margin-left:4px;vertical-align:1px}
+.built{background:#173b26;color:var(--ok)}.prop{background:#2c2142;color:var(--prop)}.gap{background:#3d1c1c;color:var(--bad)}.decide{background:#123049;color:var(--acc)}.ext{background:#3b2f12;color:var(--warn)}
+.tldr{background:linear-gradient(135deg,#17202d,#1a1730);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:14px 0}.tldr li{margin:4px 0}
+.callout{border-left:4px solid var(--acc);background:var(--panel);padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0}
+.callout.warn{border-color:var(--warn)}.callout.bad{border-color:var(--bad)}.callout.prop{border-color:var(--prop)}.callout.ok{border-color:var(--ok)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:12px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px}.card h4{margin-top:0}
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;margin:14px 0}
+.flow .step{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:140px;flex:1}
+.flow .step b{display:block;color:#fff;font-size:13px}.flow .step span{font-size:12px;color:var(--muted)}
+.flow .arrow{align-self:center;color:var(--muted);padding:0 6px;font-size:18px}
+details{background:var(--panel);border:1px solid var(--line);border-radius:8px;margin:8px 0;padding:0 14px}
+details[open]{padding-bottom:10px}summary{cursor:pointer;padding:9px 0;color:#fff}
+.dwrap{margin:6px 0 4px}
+.srcs{display:flex;flex-direction:column;gap:2px;margin:6px 0 10px}
+details.src{background:none;border:0;margin:0;padding:0}details.src[open]{padding:0}
+details.src>summary{cursor:pointer;font:11.5px/1.5 Consolas,"Cascadia Code",monospace;color:var(--muted);padding:1px 0}
+details.src>summary:hover,details.src[open]>summary{color:#fff}
+details.src>summary b{color:var(--acc);font-weight:600;margin-right:4px}
+details.src pre{max-height:460px;margin:4px 0 8px;font-size:12px}
+details.src code{white-space:pre;overflow-wrap:normal}
+.ln{display:inline-block;min-width:3.4em;padding-right:1em;text-align:right;color:#4b5563;user-select:none}
+td .srcs{margin:0;contain:inline-size}
+</style>
+</head>
+<body>
+<nav class="toc">
+<h1>TITLE</h1>
+<a href="#overview">0 · Overview</a>
+<a href="#details">1 · Details</a>
+<a class="sub" href="#details-flow">Flow</a>
+<p class="muted" style="font-size:11px;margin:8px 0 0">Click any monospace reference to expand the code. Excerpts generated <span id="snip-date">-</span>.</p>
+</nav>
+<main>
+<h1 style="color:#fff;margin:0">TITLE</h1>
+<p class="muted">Legend: <span class="tag built">built</span> exists &nbsp;<span class="tag prop">proposal</span> not built &nbsp;<span class="tag gap">gap</span> defect &nbsp;<span class="tag decide">decide</span> needs a call</p>
+
+<div class="tldr"><b>TL;DR</b><ul>
+<li>One-line takeaway.</li>
+</ul></div>
+
+<h2 id="overview">0 · Overview</h2>
+<div class="cards">
+<div class="card"><h4>Card <span class="tag built">built</span></h4><code>example</code><br><span class="muted">Short explanation.</span></div>
+<div class="card"><h4>Card <span class="tag prop">proposal</span></h4><span class="muted">Short explanation.</span></div>
+</div>
+
+<table class="fixed">
+<colgroup><col style="width:22%"><col style="width:12%"><col></colgroup>
+<tr><th>Item</th><th>Status</th><th>Code</th></tr>
+<tr><td>Thing</td><td><span class="tag built">built</span></td><td>excerpt markers go here</td></tr>
+</table>
+
+<h2 id="details">1 · Details</h2>
+<h3 id="details-flow">Flow</h3>
+<div class="flow">
+<div class="step"><b>Step 1</b><span>what happens</span></div><div class="arrow">→</div>
+<div class="step"><b>Step 2</b><span>what happens</span></div>
+</div>
+
+<div class="dwrap">
+<svg viewBox="0 0 640 120" aria-label="example diagram">
+<style>.box{fill:#161a21;stroke:#2a313c}.t{fill:#d8dee9;font-size:13px}.m{fill:#8b95a5;font-size:11px}</style>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8b95a5"/></marker></defs>
+<rect class="box" x="10" y="30" width="200" height="60" rx="8"/><text class="t" x="110" y="58" text-anchor="middle">Source</text><text class="m" x="110" y="76" text-anchor="middle">detail</text>
+<line x1="210" y1="60" x2="420" y2="60" stroke="#8b95a5" marker-end="url(#ah)"/>
+<rect class="box" x="430" y="30" width="200" height="60" rx="8"/><text class="t" x="530" y="64" text-anchor="middle">Target</text>
+</svg>
+</div>
+
+<pre><code class="lang-json">{ "key": "value", "n": 1, "ok": true }</code></pre>
+
+<div class="callout warn"><b>Risk.</b> Explanation and mitigation.</div>
+
+<details><summary>Collapsible section</summary><p>Hidden until clicked; works without JS.</p></details>
+</main>
+</body>
+</html>
