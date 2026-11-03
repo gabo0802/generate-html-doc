@@ -7,14 +7,14 @@ description: Generate a self-contained, static HTML design/overview document (di
 
 Produces one portable `.html` file that renders the same in a browser, VS Code, and **Obsidian's HTML viewer**, which sanitizes the page. All tooling lives next to this file:
 
-| Path | Purpose |
-|---|---|
-| `assets/template.src.html` | Starter page: dark theme CSS plus one example of every component |
-| `scripts/build.py` | `SRC → OUT`: fills code excerpts, bakes highlighting, converts SVG to `<img>`, strips JS, validates |
-| `scripts/snippets.py` | Excerpt resolver used by `build.py` (JSON spec format is in its docstring) |
-| `scripts/hl.py` | Static highlighter: ts/js/cs/go/…, py, json, sql, shell, yaml |
-| `scripts/sanitize.js` | DOMPurify simulation of the viewer; reports anything it strips |
-| `scripts/render.py` | Headless Edge/Chrome/Chromium screenshots, split into PNG chunks for visual QA |
+| Path                       | Purpose                                                                                             |
+| -------------------------- | --------------------------------------------------------------------------------------------------- |
+| `assets/template.src.html` | Starter page: dark theme CSS plus one example of every component                                    |
+| `scripts/build.py`         | `SRC → OUT`: fills code excerpts, bakes highlighting, converts SVG to `<img>`, strips JS, validates |
+| `scripts/snippets.py`      | Excerpt resolver used by `build.py` (JSON spec format is in its docstring)                          |
+| `scripts/hl.py`            | Static highlighter: ts/js/cs/go/…, py, json, sql, shell, yaml                                       |
+| `scripts/sanitize.js`      | DOMPurify simulation of the viewer; reports anything it strips                                      |
+| `scripts/render.py`        | Headless Edge/Chrome/Chromium screenshots, split into PNG chunks for visual QA                      |
 
 `SKILL_DIR` means the folder containing this file, e.g. `~/.agents/skills/generate-html-doc`, `~/.claude/skills/generate-html-doc`, or a project-local `.agents/skills/generate-html-doc`.
 
@@ -27,7 +27,7 @@ What a sanitizing viewer does, and why each rule exists:
 1. **No JavaScript.** `<script>` and `on*=` handlers are stripped. Highlighting is baked into static `<span class="tk-*">` at build time.
 2. **No inline `<svg>` in the output.** Viewers break `viewBox`, `text-anchor` and markers. Author diagrams as inline SVG in the source; `build.py` turns them into `data:image/svg+xml` `<img>`.
    - Every `<svg>` needs `viewBox="0 0 W H"`.
-   - Page CSS does **not** reach inside an image. Style the SVG with attributes, or with a `<style>` *inside* the `<svg>`.
+   - Page CSS does **not** reach inside an image. Style the SVG with attributes, or with a `<style>` _inside_ the `<svg>`.
    - Give `text` elements explicit `text-anchor`. The default font is Segoe UI; set `font-family` on the `<svg>` to change it.
 3. **Interactivity is `<details>`/`<summary>` only.** CSS `:hover` is fine. Avoid `:target`, checkbox hacks, `popover` and custom URL schemes.
 4. **No fixed or sticky positioning, and nothing external.** That means no remote fonts, images, `@import` or `<link rel=stylesheet>`. Use a static `nav.toc` block at the top, not a sidebar.
@@ -42,20 +42,34 @@ What a sanitizing viewer does, and why each rule exists:
    ```json
    {
      "root": ".",
-     "aliases": {"very/long/prefix/": "vlp/"},
-     "vars": {"ENG": "very/long/prefix/engine/src/engine.ts"},
+     "aliases": { "very/long/prefix/": "vlp/" },
+     "vars": { "ENG": "very/long/prefix/engine/src/engine.ts" },
      "cap": 120,
      "groups": {
-       "key-gen": {"note": "optional HTML under the block", "items": [
-         {"file": "$ENG", "sym": "selectVariant"},
-         {"file": "$ENG", "anchor": "const regenerations =", "before": 3, "after": 16, "title": "regenerate loop"},
-         {"file": "x/utils.ts", "enclosing": "_GUID first", "title": "import reads _GUID"},
-         {"file": "scripts/tool.py", "head": 80},
-         {"tree": "very/long/prefix/engine", "depth": 2, "title": "engine"}
-       ]}
+       "key-gen": {
+         "note": "optional HTML under the block",
+         "items": [
+           { "file": "$ENG", "sym": "selectVariant" },
+           {
+             "file": "$ENG",
+             "anchor": "const regenerations =",
+             "before": 3,
+             "after": 16,
+             "title": "regenerate loop"
+           },
+           {
+             "file": "x/utils.ts",
+             "enclosing": "_GUID first",
+             "title": "import reads _GUID"
+           },
+           { "file": "scripts/tool.py", "head": 80 },
+           { "tree": "very/long/prefix/engine", "depth": 2, "title": "engine" }
+         ]
+       }
      }
    }
    ```
+
    - `sym`: a declaration plus its doc comment, to the end of the block. Works for TS/JS, Python, Go, Rust and C#-style methods.
    - `anchor`: the first regex match ± N lines (`nth` picks a later match).
    - `enclosing`: the top-level declaration that contains the match (`indent` raises the allowed declaration indent).
@@ -70,6 +84,7 @@ What a sanitizing viewer does, and why each rule exists:
    node SKILL_DIR/scripts/sanitize.js <dir>/<name>.html          # prints "wrote <tmp>/<name>.purified.html"
    python3 SKILL_DIR/scripts/render.py <tmp>/<name>.purified.html --width 860
    ```
+
    - Pass `render.py` the exact path `sanitize.js` printed (the OS temp dir differs per platform).
    - View **every** chunk PNG it prints. All `<details>` are forced open, so excerpt overflow shows up.
    - Check:
