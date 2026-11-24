@@ -1,0 +1,30 @@
+/* theme: paper - Serif type on cream with oxblood ink; long-form explainers and design narratives.
+   Swap with build.py --theme NAME or the doc-theme meta tag. */
+:root{
+  --bg:#f7f3ea;--surface:#fffdf8;--surface2:#efe9dc;--fg:#2b2621;--muted:#6e655a;--line:#e2d9c8;
+  --accent:#8c2f1c;--accent2:#2f5d8a;--code-bg:#f1ebde;--ln:#a39886;
+  --ok:#1f7a3d;--ok-bg:#dff1e4;--bad:#b42318;--bad-bg:#fbe3e1;--prop:#6b46c1;--prop-bg:#eee6fb;
+  --info:#1f5fa8;--info-bg:#e0ecfa;--warn:#8a5a00;--warn-bg:#f8edd2;
+  --tk-key:#0b5cad;--tk-str:#1d7a3a;--tk-num:#a14a00;--tk-lit:#b42318;--tk-com:#6e7781;--tk-kw:#b42318;--tk-fn:#6b46c1;
+  --tk-flag:#1d7a3a;--tk-pun:#6e7781;--tk-cmd:#6b46c1;
+  --font-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --font-body:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --font-mono:"SF Mono","JetBrains Mono","Cascadia Code",Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1a1714;--surface:#221e1a;--surface2:#2a2520;--fg:#ebe3d6;--muted:#a69a8a;--line:#3a332b;
+  --accent:#e8846e;--accent2:#8bb6e0;--code-bg:#14110e;--ln:#5e5548;
+  --ok:#5fd38d;--ok-bg:#173b26;--bad:#ff7b72;--bad-bg:#3d1c1c;--prop:#c49bff;--prop-bg:#2c2142;
+  --info:#6cb6ff;--info-bg:#123049;--warn:#f2c14e;--warn-bg:#3b2f12;
+  --tk-key:#79c0ff;--tk-str:#a5e075;--tk-num:#ffa657;--tk-lit:#ff7b72;--tk-com:#8b949e;--tk-kw:#ff7b72;--tk-fn:#d2a8ff;
+  --tk-flag:#7ee787;--tk-pun:#8b95a5;--tk-cmd:#d2a8ff;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1a1714;--surface:#221e1a;--surface2:#2a2520;--fg:#ebe3d6;--muted:#a69a8a;--line:#3a332b;
+  --accent:#e8846e;--accent2:#8bb6e0;--code-bg:#14110e;--ln:#5e5548;
+  --ok:#5fd38d;--ok-bg:#173b26;--bad:#ff7b72;--bad-bg:#3d1c1c;--prop:#c49bff;--prop-bg:#2c2142;
+  --info:#6cb6ff;--info-bg:#123049;--warn:#f2c14e;--warn-bg:#3b2f12;
+  --tk-key:#79c0ff;--tk-str:#a5e075;--tk-num:#ffa657;--tk-lit:#ff7b72;--tk-com:#8b949e;--tk-kw:#ff7b72;--tk-fn:#d2a8ff;
+  --tk-flag:#7ee787;--tk-pun:#8b95a5;--tk-cmd:#d2a8ff;
+  color-scheme:dark}

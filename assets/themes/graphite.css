@@ -1,0 +1,30 @@
+/* theme: graphite - Near-monochrome greys with one orange signal color; terse engineering specs.
+   Swap with build.py --theme NAME or the doc-theme meta tag. */
+:root{
+  --bg:#f6f6f7;--surface:#ffffff;--surface2:#eeeef0;--fg:#1c1d20;--muted:#64666d;--line:#dcdde0;
+  --accent:#2b2d33;--accent2:#d0541b;--code-bg:#f0f0f2;--ln:#9a9ca3;
+  --ok:#1f7a3d;--ok-bg:#dff1e4;--bad:#b42318;--bad-bg:#fbe3e1;--prop:#6b46c1;--prop-bg:#eee6fb;
+  --info:#1f5fa8;--info-bg:#e0ecfa;--warn:#8a5a00;--warn-bg:#f8edd2;
+  --tk-key:#0b5cad;--tk-str:#1d7a3a;--tk-num:#a14a00;--tk-lit:#b42318;--tk-com:#6e7781;--tk-kw:#b42318;--tk-fn:#6b46c1;
+  --tk-flag:#1d7a3a;--tk-pun:#6e7781;--tk-cmd:#6b46c1;
+  --font-display:"Helvetica Neue","Segoe UI",Arial,system-ui,sans-serif;
+  --font-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  --font-mono:"SF Mono","JetBrains Mono","Cascadia Code",Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111214;--surface:#18191c;--surface2:#202125;--fg:#e6e7ea;--muted:#9a9ca3;--line:#2c2e33;
+  --accent:#e6e7ea;--accent2:#ff8a4c;--code-bg:#0c0d0f;--ln:#4a4c52;
+  --ok:#5fd38d;--ok-bg:#173b26;--bad:#ff7b72;--bad-bg:#3d1c1c;--prop:#c49bff;--prop-bg:#2c2142;
+  --info:#6cb6ff;--info-bg:#123049;--warn:#f2c14e;--warn-bg:#3b2f12;
+  --tk-key:#79c0ff;--tk-str:#a5e075;--tk-num:#ffa657;--tk-lit:#ff7b72;--tk-com:#8b949e;--tk-kw:#ff7b72;--tk-fn:#d2a8ff;
+  --tk-flag:#7ee787;--tk-pun:#8b95a5;--tk-cmd:#d2a8ff;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111214;--surface:#18191c;--surface2:#202125;--fg:#e6e7ea;--muted:#9a9ca3;--line:#2c2e33;
+  --accent:#e6e7ea;--accent2:#ff8a4c;--code-bg:#0c0d0f;--ln:#4a4c52;
+  --ok:#5fd38d;--ok-bg:#173b26;--bad:#ff7b72;--bad-bg:#3d1c1c;--prop:#c49bff;--prop-bg:#2c2142;
+  --info:#6cb6ff;--info-bg:#123049;--warn:#f2c14e;--warn-bg:#3b2f12;
+  --tk-key:#79c0ff;--tk-str:#a5e075;--tk-num:#ffa657;--tk-lit:#ff7b72;--tk-com:#8b949e;--tk-kw:#ff7b72;--tk-fn:#d2a8ff;
+  --tk-flag:#7ee787;--tk-pun:#8b95a5;--tk-cmd:#d2a8ff;
+  color-scheme:dark}

@@ -3,18 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="doc-theme" content="forest">
 <title>TITLE</title>
 <style>
 /* Layout: a contents rail on the left (sticky where the viewer allows it, a plain column where it doesn't) beside one reading column.
-   Recolor the tokens for each subject: 4-6 colors drawn from the subject's own world, a neutral with a slight hue toward the accent,
-   and both themes. Fonts are local stacks only: remote fonts are blocked offline and by sanitizing viewers. */
+   Fonts are local stacks only: remote fonts are blocked offline and by sanitizing viewers. */
+/* File-tree group colors (pre class="filetree" groups g1..g6). Before the theme so a theme may override them. */
+:root{--g1:#1f6feb;--g2:#1a7f37;--g3:#8250df;--g4:#bc4c00;--g5:#bf3989;--g6:#0e7c86}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--g1:#6cb6ff;--g2:#56d364;--g3:#c297ff;--g4:#ffa657;--g5:#ff7eb6;--g6:#39c5cf}}
+:root[data-theme="dark"]{--g1:#6cb6ff;--g2:#56d364;--g3:#c297ff;--g4:#ffa657;--g5:#ff7eb6;--g6:#39c5cf}
+/*theme:start - build.py replaces everything up to theme:end with assets/themes/<name>.css when the doc names a theme
+  (the doc-theme meta tag, or build.py --theme). Name "custom" to keep hand-written tokens here. */
+/* theme: forest - Deep green on warm white; calm, technical. The default.
+   Swap with build.py --theme NAME or the doc-theme meta tag. */
 :root{
   --bg:#f7f7f4;--surface:#ffffff;--surface2:#f0f0ea;--fg:#1f2421;--muted:#5f6a63;--line:#dcdfd6;
-  --accent:#2f6f5e;--accent2:#b7791f;--code-bg:#f1f2ec;
+  --accent:#2f6f5e;--accent2:#b7791f;--code-bg:#f1f2ec;--ln:#9aa39c;
   --ok:#1f7a3d;--ok-bg:#dff1e4;--bad:#b42318;--bad-bg:#fbe3e1;--prop:#6b46c1;--prop-bg:#eee6fb;
   --info:#1f5fa8;--info-bg:#e0ecfa;--warn:#8a5a00;--warn-bg:#f8edd2;
   --tk-key:#0b5cad;--tk-str:#1d7a3a;--tk-num:#a14a00;--tk-lit:#b42318;--tk-com:#6e7781;--tk-kw:#b42318;--tk-fn:#6b46c1;
-  --tk-flag:#1d7a3a;--tk-pun:#6e7781;--tk-cmd:#6b46c1;--ln:#9aa39c;
+  --tk-flag:#1d7a3a;--tk-pun:#6e7781;--tk-cmd:#6b46c1;
   --font-display:"Avenir Next","Segoe UI Variable Display","Segoe UI",system-ui,sans-serif;
   --font-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
   --font-mono:"SF Mono","JetBrains Mono","Cascadia Code",Menlo,Consolas,monospace;
@@ -22,18 +30,21 @@
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#141816;--surface:#1b201d;--surface2:#222823;--fg:#e2e7e3;--muted:#98a39c;--line:#2e3631;
-  --accent:#7cc7b0;--accent2:#e5b45a;--code-bg:#111412;
+  --accent:#7cc7b0;--accent2:#e5b45a;--code-bg:#111412;--ln:#4b5563;
   --ok:#5fd38d;--ok-bg:#173b26;--bad:#ff7b72;--bad-bg:#3d1c1c;--prop:#c49bff;--prop-bg:#2c2142;
   --info:#6cb6ff;--info-bg:#123049;--warn:#f2c14e;--warn-bg:#3b2f12;
   --tk-key:#79c0ff;--tk-str:#a5e075;--tk-num:#ffa657;--tk-lit:#ff7b72;--tk-com:#8b949e;--tk-kw:#ff7b72;--tk-fn:#d2a8ff;
-  --tk-flag:#7ee787;--tk-pun:#8b95a5;--tk-cmd:#d2a8ff;--ln:#4b5563;color-scheme:dark}}
+  --tk-flag:#7ee787;--tk-pun:#8b95a5;--tk-cmd:#d2a8ff;
+  color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#141816;--surface:#1b201d;--surface2:#222823;--fg:#e2e7e3;--muted:#98a39c;--line:#2e3631;
-  --accent:#7cc7b0;--accent2:#e5b45a;--code-bg:#111412;
+  --accent:#7cc7b0;--accent2:#e5b45a;--code-bg:#111412;--ln:#4b5563;
   --ok:#5fd38d;--ok-bg:#173b26;--bad:#ff7b72;--bad-bg:#3d1c1c;--prop:#c49bff;--prop-bg:#2c2142;
   --info:#6cb6ff;--info-bg:#123049;--warn:#f2c14e;--warn-bg:#3b2f12;
   --tk-key:#79c0ff;--tk-str:#a5e075;--tk-num:#ffa657;--tk-lit:#ff7b72;--tk-com:#8b949e;--tk-kw:#ff7b72;--tk-fn:#d2a8ff;
-  --tk-flag:#7ee787;--tk-pun:#8b95a5;--tk-cmd:#d2a8ff;--ln:#4b5563;color-scheme:dark}
+  --tk-flag:#7ee787;--tk-pun:#8b95a5;--tk-cmd:#d2a8ff;
+  color-scheme:dark}
+/*theme:end*/
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 var(--font-body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .shell{max-width:1240px;margin:0 auto;display:grid;grid-template-columns:210px minmax(0,1fr);gap:48px;padding:40px 0 100px}
@@ -93,6 +104,19 @@ details.src pre{max-height:460px;margin:4px 0 8px;font-size:12px}
 details.src code{white-space:pre;overflow-wrap:normal}
 .ln{display:inline-block;min-width:3.4em;padding-right:1em;text-align:right;color:var(--ln);user-select:none}
 td .srcs{margin:0;contain:inline-size}
+.ftree{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:12px 0 16px;overflow-x:auto}
+.ft-legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin:0 0 8px;font-size:13.5px}
+.ft-key::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;background:currentColor;margin-right:7px;vertical-align:0}
+table.ft{margin:0;font-size:13.5px;width:100%}
+table.ft td{border:0;padding:2px 14px 2px 0;vertical-align:baseline}
+table.ft td.ft-path{font:12.5px/1.7 var(--font-mono);white-space:pre;width:1%}
+.ft-guide{color:var(--muted);opacity:.55}.ft-dir{font-weight:600}
+table.ft td.ft-st{width:1%;white-space:nowrap}table.ft td.ft-desc{color:var(--muted);min-width:16em}
+.ft-badge{display:inline-block;font:600 11px var(--font-mono);padding:0 7px;border-radius:9px}
+.ft-badge.new{background:var(--ok-bg);color:var(--ok)}.ft-badge.mod{background:var(--warn-bg);color:var(--warn)}
+.ft-badge.del{background:var(--bad-bg);color:var(--bad)}.ft-badge.ren{background:var(--info-bg);color:var(--info)}
+.ft-del{text-decoration:line-through;opacity:.75}
+.g1{color:var(--g1)}.g2{color:var(--g2)}.g3{color:var(--g3)}.g4{color:var(--g4)}.g5{color:var(--g5)}.g6{color:var(--g6)}
 @media (max-width:900px){.shell{grid-template-columns:minmax(0,1fr);gap:20px;padding-top:24px}nav.toc{position:static;max-height:none}}
 </style>
 </head>
@@ -102,6 +126,7 @@ td .srcs{margin:0;contain:inline-size}
 <p class="label">Contents</p>
 <a href="#overview">0 · Overview</a>
 <a href="#details">1 · Details</a>
+<a class="sub" href="#details-files">Files</a>
 <a class="sub" href="#details-flow">Flow</a>
 <p class="stamp">Click a monospace reference to expand its code. Excerpts generated <span id="snip-date">-</span>.</p>
 </nav>
@@ -135,6 +160,20 @@ td .srcs{margin:0;contain:inline-size}
 </table>
 
 <h2 id="details">1 · Details</h2>
+<h3 id="details-files">Files</h3>
+<pre class="filetree" data-groups="page=New page; shared=Shared component; links=Links into the page">
+src/
+  components/
+    ReportPage/                 new   @page   # the new page
+      ReportPage.tsx            new           # page, pickers, empty states
+      buildReport.ts            new           # CSV export
+      __tests__/                new           # page and report tests
+    Header.tsx                  mod   @links  # adds the Report button
+  diff.ts                       mod   @shared # grouping step split out
+  legacy/oldReport.ts           del           # replaced by ReportPage
+.changeset/report-page.md       new           # patch release note
+</pre>
+
 <h3 id="details-flow">Flow</h3>
 <div class="flow">
 <div class="step"><b>Step 1</b><span>what happens</span></div><div class="arrow">→</div>
@@ -144,9 +183,9 @@ td .srcs{margin:0;contain:inline-size}
 <div class="dwrap">
 <svg viewBox="0 0 640 120" aria-label="example diagram">
 <style>
-.box{fill:#ffffff;stroke:#c9cec5}.hi{fill:#e3efe9;stroke:#2f6f5e}.t{fill:#1f2421;font-size:13px;font-weight:600}.m{fill:#5f6a63;font-size:11px}
-.ln{stroke:#7d877f;stroke-width:1.4;fill:none}.ah{fill:#7d877f}
-@media (prefers-color-scheme:dark){.box{fill:#1b201d;stroke:#2e3631}.hi{fill:#1d2c27;stroke:#7cc7b0}.t{fill:#e2e7e3}.m{fill:#98a39c}}
+/* var(--token) is resolved by build.py from the page theme, and a dark copy is added automatically. */
+.box{fill:var(--surface);stroke:var(--line)}.hi{fill:var(--surface2);stroke:var(--accent)}.t{fill:var(--fg);font-size:13px;font-weight:600}.m{fill:var(--muted);font-size:11px}
+.ln{stroke:var(--muted);stroke-width:1.4;fill:none}.ah{fill:var(--muted)}
 </style>
 <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="ah" d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <rect class="box" x="10" y="30" width="200" height="60" rx="8"/><text class="t" x="110" y="58" text-anchor="middle">Source</text><text class="m" x="110" y="76" text-anchor="middle">detail</text>
